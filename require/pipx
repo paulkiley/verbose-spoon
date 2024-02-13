@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Check if pipx is installed
+if command -v pipx &> /dev/null; then
+  echo "pipx is already installed."
+
+  # Update pipx to the latest version (optional)
+  echo "Would you like to update pipx to the latest version? (y/n)"
+  read -r update_pipx
+
+  if [[ "$update_pipx" =~ ^[Yy]$ ]]; then
+    python -m pipx upgrade-pipx
+    echo "pipx updated successfully."
+  else
+    echo "pipx update skipped."
+  fi
+else
+  echo "pipx is not installed. Installing..."
+
+  # Use the official installation method for macOS, ensuring compatibility and security
+  curl -sSL https://github.com/pypa/pipx/install | bash
+  source ~/.bashrc  # Add pipx to shell path (if not already added)
+
+  echo "pipx installed successfully."
+fi
+
+# Verify pipx functionality after installation or update
+python -m pipx --version
+echo "pipx version:" $?  # Check exit code to ensure successful execution
+
+# If pipx was installed/updated, offer guidance on potential next steps
+if [[ $? -eq 0 ]]; then
+  echo "pipx is now ready to use. You can manage Python packages in virtual environments using:"
+  echo "  pipx install <package-name>"
+  echo "  pipx run <package-name>"
+  echo "  pipx uninstall <package-name>"
+fi
